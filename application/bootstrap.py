@@ -22,13 +22,14 @@ def choose_strategy(kind: str, **kwargs) -> PricingStrategy:
             raise ValueError("Missing one of the required parameters: 'sku', 'threshold', 'per_item_off'")
         return BulkItemDiscount(sku, threshold, per_item_off)
     elif kind == "composite":
-        strategies = kwargs.get("strategies")
-        if not strategies or not isinstance(strategies, list):
-            raise ValueError("Missing or invalid 'strategies' parameter; must be a list of PricingStrategy instances")
-        for strategy in strategies:
-            if not isinstance(strategy, PricingStrategy):
-                raise ValueError("All items in 'strategies' must be instances of PricingStrategy")
-        return CompositeStrategy(strategies)
+        percent = kwargs.get("percent", 0.0)
+        sku = kwargs.get("sku", "")
+        threshold = kwargs.get("threshold", 0)
+        per_item_off = kwargs.get("per_item_off", 0.0)
+        return CompositeStrategy([
+            PercentageDiscount(percent),
+            BulkItemDiscount(sku, threshold, per_item_off)
+        ])
     else:
         raise ValueError(f"Unknown strategy kind: {kind}")
     pass

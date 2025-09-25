@@ -42,7 +42,6 @@ class PercentageDiscount(PricingStrategy):
 
     # TODO: Implement the main calculation method that reduces the input by a percentage
     def apply(self, subtotal: float, items: list[LineItem]) -> float:
-        subtotal = super().apply(subtotal, items)
         discount = subtotal * (self.percent / 100)
         return round(subtotal - discount, 2)
 
@@ -57,7 +56,6 @@ class BulkItemDiscount(PricingStrategy):
 
     # TODO: Implement logic to iterate through items and apply reductions based on quantity thresholds
     def apply(self, subtotal: float, items: list[LineItem]) -> float:
-        subtotal = super().apply(subtotal, items)
         for item in items:
             if item.sku == self.sku and item.qty >= self.threshold:
                 subtotal -= self.per_item_off * item.qty
@@ -73,8 +71,8 @@ class CompositeStrategy(PricingStrategy):
     # TODO: Implement method that applies each strategy in sequence, using the output of one as input to the next
     def apply(self, subtotal: float, items: list[LineItem]) -> float:
         for strategy in self.strategies:
-            subtotal = strategy.calculate(subtotal, items)
-        return subtotal
+            subtotal = strategy.apply(subtotal, items)
+        return round(float(subtotal), 2)
 
 def compute_subtotal(items: list[LineItem]) -> float:
     return round(sum(it.unit_price * it.qty for it in items), 2)

@@ -50,7 +50,7 @@ def main() -> None:
     # Display the results (subtotal, strategy used, and final total)
     print(f"Subtotal: {subtotal:.2f}")
     print(f"Strategy: {args.strategy}")
-    print(f"Final Total: {final_total:.2f}")
+    print(f"Total: {final_total:.2f}")
 
 
 if __name__ == "__main__":
