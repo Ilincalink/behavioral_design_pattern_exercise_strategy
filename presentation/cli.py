@@ -28,12 +28,29 @@ def main() -> None:
     subtotal = compute_subtotal(items)
     
     # TODO: Get the appropriate strategy using choose_strategy function
-    # TODO: Apply the strategy to calculate the final total
-    # TODO: Display the results (subtotal, strategy used, and final total)
-    
+    if args.strategy == "none":
+        strategy = choose_strategy("none")
+    elif args.strategy == "percent":
+        strategy = choose_strategy("percent", percent=args.percent)
+    elif args.strategy == "bulk":
+        strategy = choose_strategy("bulk", sku=args.sku, threshold=args.threshold, per_item_off=args.per_item_off)
+    elif args.strategy == "composite":
+        strategies = []
+        if args.percent > 0:
+            strategies.append(choose_strategy("percent", percent=args.percent))
+        if args.sku and args.threshold > 0 and args.per_item_off > 0:
+            strategies.append(choose_strategy("bulk", sku=args.sku, threshold=args.threshold, per_item_off=args.per_item_off))
+        strategy = choose_strategy("composite", strategies=strategies)
+    else:
+        raise ValueError(f"Unknown strategy kind: {args.strategy}")
+
+    # Apply the strategy to calculate the final total
+    final_total = strategy.apply(subtotal, items)
+
+    # Display the results (subtotal, strategy used, and final total)
     print(f"Subtotal: {subtotal:.2f}")
     print(f"Strategy: {args.strategy}")
-    # TODO: Calculate and print the final total
+    print(f"Final Total: {final_total:.2f}")
 
 
 if __name__ == "__main__":
